@@ -91,15 +91,6 @@
     </div>
   </div>
 </div>
-    <!-- //模态框 -->
-    <modal :mdShow="mdShow" v-on:close="closeModal">
-        <p slot="message">
-            当前没有登录，请先登录！
-        </p>
-        <div slot="btnGroup">
-            <a class="btn btn--m" href="javascript:;" @click="closeModal">关闭</a>
-        </div>
-    </modal>
 
     <!-- 删除确认模态框 -->
       <modal :mdShow="delShow" v-on:close="closeModal">
@@ -148,8 +139,6 @@ export default {
   name: "Cart",
   data() {
     return {
-      loginStatus: true, //登录状态
-      mdShow: false, //是否显示提示未登录的模态框
       delShow: false, //是否显示删除提示模态框
       delGood: {}, //当前要删除的商品
       // selectAll:false, //是否全部选中
@@ -157,7 +146,7 @@ export default {
     };
   },
   mounted() {
-    this.checkLogin();
+    this.getCartList();
   },
   computed: {
     //是否全部选中
@@ -269,24 +258,8 @@ export default {
         }
       });
     },
-    //判断当前有没有登录
-    checkLogin() {
-      this.axios.get(this.serverUrl+"/users/checkLogin").then(response => {
-        var res = response.data;
-        if (res.status == "0") {
-          this.loginStatus = true;
-          this.mdShow = false;
-          //如果返回“0”则已登录，获得当前用户的购物车列表
-          this.getCartList();
-        } else {
-          this.loginStatus = false;
-          this.mdShow = true;
-        }
-      });
-    },
     //关闭模态框
     closeModal() {
-      this.mdShow = false;
       this.delShow = false;
     }
   }

@@ -20,7 +20,6 @@ npm run dev
 npm run build
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
 ## Vue2.0+Node.js+MongoDB全栈打造商城系统
 ---
@@ -337,6 +336,20 @@ module.exports = {
   API_HOST:'"http://10.1.5.11:8080/"'
 }
 ```
+然后第二步后端服务器配置一下cros跨域即可，就是access-control-allow-origin：*允许所有访问的意思。综上：开发的环境下我们前端可以自己配置个proxy代理就能跨域了，真正的生产环境下还需要后端的配合的。
+```
+//设置跨域访问 (在server下的app.js加入以下代码)
+app.all('*', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+    res.header("X-Powered-By",' 3.2.1')
+    res.header("Content-Type", "application/json;charset=utf-8");
+    next();
+});
+```
+
+
 参考：[vue中axios解决跨域问题和拦截器使用](https://blog.csdn.net/kirinlau/article/details/78611774)
 
 ----
