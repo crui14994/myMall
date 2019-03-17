@@ -6,12 +6,13 @@ import router from './router'
 import VueLazyload from 'vue-lazyload' //图片懒加载插件
 import infiniteScroll from 'vue-infinite-scroll' //滚动加载插件
 import VueCurrencyFilter from 'vue-currency-filter' //价格过滤器
-
+import store from '@/vuex/store'
 
 import axios from 'axios';
 import apiConfig from './../config/api.config.js'
 axios.defaults.baseURL=apiConfig.baseURL;
 Vue.prototype.axios = axios;
+
 
 
 Vue.config.productionTip = false
@@ -46,6 +47,7 @@ Vue.use(VueCurrencyFilter,
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

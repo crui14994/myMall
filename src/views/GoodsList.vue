@@ -222,6 +222,7 @@ export default {
           var res = res.data;
           if (res.status == 0) {
             this.mdShowLogin=true;
+            this.$store.commit("addCartCount", 1);
           } else {
             this.mdShow=true;
           }

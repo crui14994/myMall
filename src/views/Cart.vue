@@ -180,11 +180,11 @@ export default {
   },
   methods: {
     //结账，跳转到地址页
-    checkOut(){
-      if(this.checkedCount>0){
+    checkOut() {
+      if (this.checkedCount > 0) {
         this.$router.push({
-          path:"/address"
-        })
+          path: "/address"
+        });
       }
     },
     //是否全部选中事件
@@ -200,7 +200,7 @@ export default {
         .then(response => {
           let res = response.data;
           if (res.status == "0") {
-          // this.getCartList();
+            // this.getCartList();
           }
         });
     },
@@ -210,10 +210,12 @@ export default {
         //减
         if (good.productNum > 1) {
           good.productNum--;
+          this.$store.commit("addCartCount", -1);
         }
       } else if (flag == "add") {
         //加
         good.productNum++;
+        this.$store.commit("addCartCount", 1);
       } else if (flag == "checked") {
         //修改是否选中
         good.checked = good.checked == "1" ? "0" : "1";
@@ -244,6 +246,7 @@ export default {
         .then(response => {
           var res = response.data;
           if (res.status == "0") {
+            this.$store.commit("addCartCount", -this.delGood.productNum);
             this.delShow = false;
             this.getCartList();
           }

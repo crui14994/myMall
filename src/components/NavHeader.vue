@@ -71,11 +71,11 @@
         </div>
         <div class="navbar-right-container" style="display: flex;">
         <div class="navbar-menu-container">
-            <span class="navbar-link"><span v-if="userName">欢迎您！</span>{{userName}}</span>
+            <span class="navbar-link" v-if="loginStatus"><span >欢迎您！</span>{{userStateName}}</span>
             <a href="javascript:void(0)" class="navbar-link" @click="showLogin" v-show="!loginStatus">登录</a>
             <a href="javascript:void(0)" class="navbar-link" @click="logOut" v-show="loginStatus">退出</a>
             <div class="navbar-cart-container">
-            <span class="navbar-cart-count"></span>
+            <span class="navbar-cart-count" v-if="cartCount>0">{{cartCount}}</span>
             <router-link class="navbar-link navbar-cart-link" to="/cart">
                 <svg class="navbar-cart-logo">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cart"></use>
@@ -118,7 +118,7 @@
 </template>
 
 <script>
-
+import { mapState } from "vuex";
 
 export default {
   name: "NavHeader",
@@ -133,7 +133,7 @@ export default {
     };
   },
   components: {},
-  computed: {},
+  computed: mapState(["userStateName","cartCount"]),
   created() {},
   mounted() {
     this.checkLogin();
@@ -145,10 +145,11 @@ export default {
         var res = response.data;
         if (res.status == "0") {
           this.loginStatus = true;
-          this.userName = res.result;
+          this.$store.commit("updataUserName", res.result);
+          this.getCount();
         } else {
           this.loginStatus = false;
-          this.userName = "";
+          this.$store.commit("updataUserName", "");
         }
       });
     },
@@ -173,6 +174,7 @@ export default {
             this.errorTip = false;
             this.loginModalFlag = false;
             this.loginStatus = true;
+            this.getCount();
             history.go(0);
           } else {
             this.errorTip = true;
@@ -186,8 +188,17 @@ export default {
         var res = response.data;
         if (res.status == "0") {
           this.loginStatus = false;
-          this.userName = "";
+          this.$store.commit("updataUserName", "");
           history.go(0);
+        }
+      });
+    },
+    //获取购物车数量
+    getCount() {
+      this.axios.get("/users/getCartCount").then(response => {
+        var res = response.data;
+        if (res.status == "0") {
+          this.$store.commit("updataCartCount",res.result);
         }
       });
     }
@@ -267,5 +278,7 @@ a {
   height: 25px;
   transform: scaleX(-1);
 }
-
+.navbar-cart-count{
+  z-index: 100;
+}
 </style>
