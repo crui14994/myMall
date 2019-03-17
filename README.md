@@ -402,7 +402,6 @@ axios.defaults.baseURL=apiConfig.baseURL;
 Vue.prototype.axios = axios; //在后面的页面中不用再引入，只需this.axios
 
 ```
-```
 然后第二步后端服务器配置一下cros跨域即可，就是access-control-allow-origin：*允许所有访问的意思。综上：开发的环境下我们前端可以自己配置个proxy代理就能跨域了，真正的生产环境下还需要后端的配合的。
 ```
 //设置跨域访问 (在server下的app.js加入以下代码)
