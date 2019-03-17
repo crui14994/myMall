@@ -157,7 +157,7 @@ export default {
     //根据参数获取商品列表
     getGoodsList(flag) {
       this.axios
-        .get(this.serverUrl+"/goods/list", {
+        .get("/goods/list", {
           params: {
             page: this.page,
             pageSize: this.pageSize,
@@ -215,7 +215,7 @@ export default {
     //加入到购物车
     addCart(productId) {
       this.axios
-        .post(this.serverUrl+"/goods/addCart", {
+        .post("/goods/addCart", {
           productId: productId
         })
         .then(res => {

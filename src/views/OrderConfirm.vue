@@ -137,7 +137,7 @@ export default {
     //提交到支付页面
     payMent() {
       this.axios
-        .post(this.serverUrl+"/users/payMent", {
+        .post("/users/payMent", {
           addressId: this.$route.query.addressId,
           orderTotal: this.orderTotal
         })
@@ -152,7 +152,7 @@ export default {
     },
     //获取购物车列表
     getCartList() {
-      this.axios.get(this.serverUrl+"/users/cartList").then(response => {
+      this.axios.get("/users/cartList").then(response => {
         var res = response.data;
         if (res.status == "0") {
           this.cartList = res.result;

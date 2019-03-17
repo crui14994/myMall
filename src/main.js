@@ -7,11 +7,12 @@ import VueLazyload from 'vue-lazyload' //图片懒加载插件
 import infiniteScroll from 'vue-infinite-scroll' //滚动加载插件
 import VueCurrencyFilter from 'vue-currency-filter' //价格过滤器
 
+
 import axios from 'axios';
+import apiConfig from './../config/api.config.js'
+axios.defaults.baseURL=apiConfig.baseURL;
 Vue.prototype.axios = axios;
 
-//给每一个调用的接口配置一个通用的serverUrl
-Vue.prototype.serverUrl  = '/api';
 
 Vue.config.productionTip = false
 

@@ -171,7 +171,7 @@ export default {
     //删除地址
     delModal() {
       this.axios
-        .post(this.serverUrl+"/users/delAddress", {
+        .post("/users/delAddress", {
           addressId: this.addressId
         })
         .then(response => {
@@ -194,7 +194,7 @@ export default {
     //设置默认地址
     setDefultAddress(addressId) {
       this.axios
-        .post(this.serverUrl+"/users/setDefault", {
+        .post("/users/setDefault", {
           addressId: addressId
         })
         .then(response => {
@@ -219,7 +219,7 @@ export default {
     },
     //获取用户收货地址
     getAddressList() {
-      this.axios.get(this.serverUrl+"/users/addressList").then(response => {
+      this.axios.get("/users/addressList").then(response => {
         var res = response.data;
         if (res.status == "0") {
           this.addressList = res.result;

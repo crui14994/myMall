@@ -194,7 +194,7 @@ export default {
         item.checked = flag ? "1" : "0";
       });
       this.axios
-        .post(this.serverUrl+"/users/editCheckAll", {
+        .post("/users/editCheckAll", {
           checkAll: flag
         })
         .then(response => {
@@ -219,7 +219,7 @@ export default {
         good.checked = good.checked == "1" ? "0" : "1";
       }
       this.axios
-        .post(this.serverUrl+"/users/cartEdit", {
+        .post("/users/cartEdit", {
           productId: good.productId,
           productNum: good.productNum,
           checked: good.checked
@@ -238,7 +238,7 @@ export default {
     //商品删除
     delCart() {
       this.axios
-        .post(this.serverUrl+"/users/cartDel", {
+        .post("/users/cartDel", {
           productId: this.delGood.productId
         })
         .then(response => {
@@ -251,7 +251,7 @@ export default {
     },
     //获得当前用户的购物车列表
     getCartList() {
-      this.axios.get(this.serverUrl+"/users/cartList").then(response => {
+      this.axios.get("/users/cartList").then(response => {
         var res = response.data;
         if (res.status == "0") {
           this.cartList = res.result;

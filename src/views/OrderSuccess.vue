@@ -71,7 +71,7 @@ export default {
         return;
       }
       this.axios
-        .get(this.serverUrl+"/users/orderDetail", {
+        .get("/users/orderDetail", {
           params: { orderId: orderId }
         })
         .then(response => {

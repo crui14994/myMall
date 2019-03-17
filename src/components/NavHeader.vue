@@ -141,7 +141,7 @@ export default {
   methods: {
     //判断当前有没有登录
     checkLogin() {
-      this.axios.get(this.serverUrl+"/users/checkLogin").then(response => {
+      this.axios.get("/users/checkLogin").then(response => {
         var res = response.data;
         if (res.status == "0") {
           this.loginStatus = true;
@@ -163,7 +163,7 @@ export default {
         return;
       }
       this.axios
-        .post(this.serverUrl+"/users/login", {
+        .post("/users/login", {
           userName: this.userName,
           userPwd: this.userPwd
         })
@@ -182,7 +182,7 @@ export default {
     },
     //退出
     logOut() {
-      this.axios.post(this.serverUrl+"/users/logout").then(response => {
+      this.axios.post("/users/logout").then(response => {
         var res = response.data;
         if (res.status == "0") {
           this.loginStatus = false;

@@ -295,6 +295,69 @@ router.get("/checkLogin", function (req, res, next) {
     maxAge: 1000 * 60 * 60
   });
 ```
+----
+### 4.nginx反向代理-解决前端跨域问题及（vue-route+webpack部署单页路由项目，访问刷新出现404问题）
+> 问题原因：
+刷新页面时访问的资源在服务端找不到，因为vue-router设置的路径不是真实存在的路径。要在nginx配置里添加vue-route的跳转设置；详细配置如下：
+```
+#gzip  on;
+    server {
+        listen       80;
+        server_name  mymall.sczhengshi.com;
+
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+        root C:\Users\Administrator\Desktop\server\mymall\public;
+    
+        location / {
+            add_header 'Access-Control-Allow-Origin' '*';
+            proxy_pass http://localhost:8282;
+            try_files $uri $uri/ @router; #需要指向下面的@router否则会出现vue的路由在nginx中刷新出现404
+            index index.html index.htm;
+        }
+         #对应上面的@router，主要原因是路由的路径资源并不是一个真实的路径，所以无法找到具体的文件
+        #因此需要rewrite到index.html中，然后交给路由在处理请求资源
+        location @router {
+            rewrite ^.*$ /index.html last;
+        }
+
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+    server {
+        listen       80;
+        server_name  api.sczhengshi.com;
+
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+
+        location / {
+           add_header 'Access-Control-Allow-Origin' '*';
+           proxy_pass http://localhost:3000;
+        }
+        # location /api/* {
+        #    add_header 'Access-Control-Allow-Origin' '*';
+        #    proxy_pass http://localhost:3000;
+        # }
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+```
 
 
 ## VUE
@@ -321,20 +384,24 @@ dev: {
     }
 }
 ```
-跨域成功，但是这只是开发环境（dev）中解决了跨域问题，生产环境中真正部署到服务器上如果是非同源还是存在跨域问题，如我们部署的服务器端口是3001，需要前后端联调，第一步前端我们可以分生产production和开发development两种环境分别测试，在config/dev.env.js和prod.env.js里也就是开发/生产环境下分别配置一下请求的地址API_HOST，开发环境中我们用上面配置的代理地址api，生产环境下用正常的接口地址，所以这样配置，分别在config/dev.env.js和prod.env.js两个文件中进行以下配置。
-config/dev.env.js：
+跨域成功，但是这只是开发环境（dev）中解决了跨域问题，生产环境中真正部署到服务器上如果是非同源还是存在跨域问题
+首先在/config目录下新建一个文件,我这里叫api.config.js
 ```
-module.exports = merge(prodEnv, {
-  NODE_ENV: '"development"',//开发环境
-  API_HOST:"/api/"
-})
-```
-config/dev.env.js：
-```
+//判断是否是生产环境
+var isPro = process.env.NODE_ENV === 'production' //process.env.NODE_ENV用于区分是生产环境还是开发环境
+//根据环境不同导出不同的baseURL
 module.exports = {
-  NODE_ENV: '"production"',//生产环境
-  API_HOST:'"http://10.1.5.11:8080/"'
+    baseURL: isPro ? 'http://api.sczhengshi.com/' : '/api'
 }
+```
+然后，在main.js中引入axios和刚才那个文件
+```
+import axios from 'axios';
+import apiConfig from './../config/api.config.js'
+axios.defaults.baseURL=apiConfig.baseURL;
+Vue.prototype.axios = axios; //在后面的页面中不用再引入，只需this.axios
+
+```
 ```
 然后第二步后端服务器配置一下cros跨域即可，就是access-control-allow-origin：*允许所有访问的意思。综上：开发的环境下我们前端可以自己配置个proxy代理就能跨域了，真正的生产环境下还需要后端的配合的。
 ```
@@ -376,4 +443,23 @@ export default new Router({
   base: '/mall/',  //添加的地方
   ...
  }
+```
+
+### 3.Vue.js里面使用Axios发送Post请求出现跨域
+> 具体报错如:Access to XMLHttpRequest at 'http://api.sczhengshi.com/goods/addCart' from origin 'http://mymall.sczhengshi.com' has been blocked by CORS policy: Request header field content-type is not allowed by Access-Control-Allow-Headers in preflight response.
+--------------------- 
+项目中引入 
+```
+import qs from 'qs'
+```
+然后我们发送Axios的时候使用qs.stringify
+````
+this.axios
+        .post("/users/login", qs.stringify({
+          userName: this.userName,
+          userPwd: this.userPwd
+        }))
+        .then(response => {
+          ...
+        });
 ```
